@@ -1,0 +1,125 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_execve.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aezzara <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/09/07 23:53:48 by aezzara           #+#    #+#             */
+/*   Updated: 2021/09/07 23:53:54 by aezzara          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+/*
+**	char	*get_cmd_path(char **env, char **arr)
+**		find the path (by using function 'which') where
+**		system functions are stored
+*/
+
+static char	*get_cmd_path(t_all *all, char **arr)
+{
+	int		p[2];
+	pid_t	pid;
+	char	*path;
+
+	path = NULL;
+	if (pipe(p) < 0)
+		exit(EXIT_FAILURE);
+	pid = fork();
+	if (pid == -1)
+		exit(EXIT_FAILURE);
+	else if (pid == 0)
+	{
+		close(p[0]);
+		dup2(p[1], 1);
+		execve("/usr/bin/which", arr, all->env);
+	}
+	else
+	{
+		wait(NULL);
+		close(p[1]);
+		get_next_line(p[0], &path);
+		close(p[0]);
+	}
+	return (path);
+}
+
+/*
+**	char	**offset_arr(char **arr, char *str)
+**		offser given arr (n - element become n + 1)
+**		then fill first element with 'str'
+**		(that func needed to use execve later)
+*/
+
+char	**offset_arr(char **arr, char *str)
+{
+	int		i;
+	char	**new_arr;
+
+	i = 0;
+	while (arr[i])
+		i++;
+	new_arr = (char **)malloc(sizeof(char *) * (i + 2));
+	if (!new_arr)
+		return (NULL);
+	new_arr[i + 1] = NULL;
+	while (i--)
+		new_arr[i + 1] = ft_strdup(arr[i]);
+	new_arr[0] = ft_strdup(str);
+	return (new_arr);
+}
+
+int	ft_execve_func(char *path, t_all *all)
+{
+	pid_t	pid;
+	int		fd[2];
+
+	if (pipe(fd) < 0)
+		exit(EXIT_FAILURE);
+	pid = fork();
+	if (pid == -1)
+		exit(EXIT_FAILURE);
+	else if (pid == 0)
+	{
+		close(fd[0]);
+		execve(path, all->words, all->env);
+		close(fd[1]);
+		exit(EXIT_FAILURE);
+	}
+	else
+	{
+		wait(0);
+		close(fd[1]);
+		close(fd[0]);
+	}
+	return (0);
+}
+
+void	execve_cmd(t_all *all)
+{
+	char	*cmd_path;
+	char	**arr;
+
+	arr = offset_arr(all->words, "minishell");
+	if (!arr)
+		return ;
+	set_signals(1);
+	cmd_path = get_cmd_path(all, arr);
+	if (!cmd_path || (cmd_path && !cmd_path[0]))
+		cmd_not_found(all->words[0]);
+	else if (all->pipe_flag == 0)
+	{
+		g_exit = 0;
+		ft_execve_func(cmd_path, all);
+	}
+	else
+	{
+		g_exit = 0;
+		execve(cmd_path, all->words, all->env);
+	}
+	set_signals(0);
+	free_arr((void **)arr);
+	free(cmd_path);
+}
