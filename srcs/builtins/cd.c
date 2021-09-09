@@ -24,7 +24,15 @@ void	go_home(t_all *all)
 		g_exit = 1;
 		return ;
 	}
-	chdir(home_path);
+	if (chdir(home_path))
+	{
+		ft_putstr_fd("minishell: cd: ", 2);
+		ft_putstr_fd(home_path, 2);
+		ft_putstr_fd(": ", 2);
+		ft_putendl_fd(strerror(errno), 2);
+		g_exit = 1;
+		return ;
+	}
 	free(home_path);
 	update_pwd(all);
 }
@@ -41,10 +49,10 @@ void	tilda(t_all *all)
 	}
 	if (chdir(all->words[1]))
 	{
-		ft_putstr_fd("minishell: cd: ", 1);
-		ft_putstr_fd(all->words[1], 1);
-		ft_putstr_fd(": ", 1);
-		ft_putendl_fd(strerror(errno), 1);
+		ft_putstr_fd("minishell: cd: ", 2);
+		ft_putstr_fd(all->words[1], 2);
+		ft_putstr_fd(": ", 2);
+		ft_putendl_fd(strerror(errno), 2);
 		g_exit = 1;
 		return ;
 	}

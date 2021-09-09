@@ -1,30 +1,24 @@
 #include "minishell.h"
 
-void	join_arg(t_all *all)
+void	join_arg(t_all *all, char *words)
 {
 	char	**tmp;
-	int		i;
 	int		len;
 
-	i = 0;
-	printf("check\n");
-	while (all->words[++i])
+	if (!check_match(all, words))
 	{
-		if (!check_match(all, all->words[i]))
+		len = ft_strlen_arr(all->env) + 1;
+		tmp = ft_calloc(sizeof(char *), len + 2);
+		len = 0;
+		while (all->env[len])
 		{
-			len = ft_strlen_arr(all->env) + 1;
-			tmp = ft_calloc(sizeof(char *), len + 2);
-			len = 0;
-			while (all->env[len])
-			{
-				tmp[len] = ft_strdup(all->env[len]);
-				len++;
-			}
-			tmp[len] = ft_strdup(all->words[i]);
-			free_arr((void **)all->env);
-			all->env = env_copy(tmp);
-			free_arr((void **)tmp);
+			tmp[len] = ft_strdup(all->env[len]);
+			len++;
 		}
+		tmp[len] = ft_strdup(words);
+		free_arr((void **)all->env);
+		all->env = env_copy(tmp);
+		free_arr((void **)tmp);
 	}
 	g_exit = 0;
 }
@@ -56,7 +50,7 @@ int	check_words(char *words)
 	{
 		error("minishell: export: `", words, "': not a valid identifier");
 		g_exit = 1;
-		return (1);
+		return (0);
 	}
 	j = 1;
 	while (j < (int)ft_strlen(words) && words[j] != '=')
@@ -67,28 +61,28 @@ int	check_words(char *words)
 			error("minishell: export: `", words, \
 				"': not a valid identifier");
 			g_exit = 1;
-			return (1);
+			return (0);
 		}
 		j++;
 	}
-	return (0);
+	return (1);
 }
 
 void	print_export(t_all *all)
 {
 	int		i;
-	int		count;
 
-	i = -1;
-	count = 0;
+	i = 0;
 	if (!all->words[1])
 		print_env_with_scopes(all);
 	else
 	{
 		while (all->words[++i])
-			count += check_words(all->words[i]);
-		if (count)
-			return ;
-		join_arg(all);
+		{
+			if (!check_words(all->words[i]))
+				continue ;
+			else
+				join_arg(all, all->words[i]);
+		}
 	}
 }

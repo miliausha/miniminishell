@@ -7,6 +7,8 @@ char	*join_quotes(char *env)
 	if (ft_strchr(env, '=') && ft_strchr(env, '=') + 1)
 	{
 		env_copy = ft_strtrim(env, ft_strchr(env, '=') + 1);
+		if (env_copy[ft_strlen(env_copy) - 1] != '=')
+			env_copy = ft_strjoin(env_copy, ft_strdup("="));
 		env_copy = ft_strjoin(env_copy, ft_strdup("\""));
 		env_copy = ft_strjoin(env_copy, ft_strdup(ft_strchr(env, '=') + 1));
 		env_copy = ft_strjoin(env_copy, ft_strdup("\""));
@@ -50,7 +52,10 @@ char	*match_cicle(char *env, char *tmp, char *words, int *match)
 		len++;
 	if (!ft_strncmp(env, tmp, len) && !ft_strncmp(env, tmp, ft_strlen(tmp)))
 	{
-		copy = ft_strdup(words);
+		if (!ft_strchr(words, '=') && ft_strchr(env, '='))
+			copy = ft_strdup(env);
+		else
+			copy = ft_strdup(words);
 		(*match)++;
 	}
 	else
