@@ -25,6 +25,8 @@ void	heredoc(t_all *all, int *fd)
 		ft_strlen(all->redir_file) + 1))
 	{
 		line = readline("> ");
+		if (!line)
+			break ;
 		if (ft_strncmp(all->redir_file, line, \
 			ft_strlen(all->redir_file) + 1))
 		{

@@ -21,17 +21,18 @@ static int	check_spec_symbols(char *line, int *i)
 {
 	int	j;
 
-	j = *i;
 	if ((line[*i] == '>' && line[*i + 1] == '>')
 		|| (line[*i] == '<' && line[*i + 1] == '<'))
 		(*i)++;
+	j = *i;
 	(*i)++;
 	skip_whitespace(line, i);
 	if (!line[*i])
 	{
 		printf("minishell: : syntax error near unexpected token `%c'\n", \
-			line[*i]);
+			line[*i - 1]);
 		g_exit = 258;
+		*i = j;
 		return (1);
 	}
 	if (ft_strchr("<>|", line[*i]))
@@ -39,8 +40,10 @@ static int	check_spec_symbols(char *line, int *i)
 		g_exit = 258;
 		printf("minishell: : syntax error near unexpected token `%c'\n", \
 			line[*i]);
+		*i = j;
 		return (1);
 	}
+	(*i) = j;
 	return (0);
 }
 
@@ -55,7 +58,7 @@ static int	checking_cicle(char	*line, int *i, int q_flag)
 	if (ft_strchr("()&`", line[*i]))
 	{
 		g_exit = 258;
-		printf("3 minishell: : syntax error near unexpected token `%c'\n", \
+		printf("minishell: : syntax error near unexpected token `%c'\n", \
 			line[*i]);
 		return (1);
 	}

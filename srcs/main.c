@@ -29,10 +29,14 @@ char	*get_line(t_all *all)
 {
 	char	*line;
 
+	if (!all->env)
+		return (NULL);
+
 	line = readline("minishell$ ");
 	if (!line)
-		ft_exit(all);
-	add_history(line);
+		exit(g_exit);
+	if (ft_strlen(line) > 0)
+		add_history(line);
 	return (line);
 }
 

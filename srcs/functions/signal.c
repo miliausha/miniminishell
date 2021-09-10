@@ -42,5 +42,7 @@ void	sigfunc(int sig)
 	{
 		rl_on_new_line();
 		rl_redisplay();
+		printf("exit\n");
+		exit (0);
 	}
 }

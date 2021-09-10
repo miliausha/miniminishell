@@ -19,9 +19,9 @@ char	*get_result(t_all *all, char *res, char **tmp)
 		res = ft_itoa(g_exit);
 	else
 		res = env_path_search(all->env, *tmp);
-	free(*tmp);
-	if (!res && all->words)
+	if (!res && all->words && !ft_isdigit(*tmp[0]))
 		res = ft_strdup(" ");
+	free(*tmp);
 	if (!res && !all->words)
 		return (NULL);
 	return (res);
@@ -43,22 +43,25 @@ void	env_parser(char *line, t_all *all, int *i)
 
 	tmp = NULL;
 	res = NULL;
-	(*i)++;
-	if (ft_isdigit(line[*i]))
-		add_tmp(&tmp, line[(*i)++]);
-	else if (line[*i] == '?')
+	if (ft_isdigit(line[*i + 1]) || line[*i + 1] == '?')
+		add_tmp(&tmp, line[(*i += 2) - 1]);
+	else if (ft_isalnum(line[*i + 1]) || line[*i + 1] == '_')
 	{
-		add_tmp(&tmp, line[*i]);
 		(*i)++;
-	}
-	else if (!ft_isdigit(line[*i]))
-	{
-		while (ft_isalnum(line[*i]) || line[*i] == '_')
+		while (ft_isalnum(line[*i]) || line[(*i)] == '_')
 			add_tmp(&tmp, line[(*i)++]);
 		add_tmp(&tmp, '=');
 	}
-	res = get_result(all, res, &tmp);
-	if (!res)
-		return ;
-	get_argument(all, &res, &tmp);
+	else
+	{
+		add_arg(all, line[*i]);
+		(*i)++;
+	}
+	if (tmp)
+	{
+		res = get_result(all, res, &tmp);
+		if (!res)
+			return ;
+		get_argument(all, &res, &tmp);
+	}
 }
