@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void	child_process(t_all *all, int status, int i)
+void	child_process(t_all *all, int *status, int i)
 {
 	dup2(all->fd_in, 0);
 	if (all->parts[i + 1] != NULL)
@@ -8,7 +8,7 @@ void	child_process(t_all *all, int status, int i)
 	close(all->pipefd[0]);
 	start_parsing(all, all->parts[i]);
 	run_commands(all);
-	exit(status);
+	exit(*status);
 }
 
 void	run_pipe(t_all *all)
@@ -28,10 +28,16 @@ void	run_pipe(t_all *all)
 		if (pid < 0)
 			exit(EXIT_FAILURE);
 		else if (pid == 0)
-			child_process(all, status, i);
+			child_process(all, &status, i);
 		else
 		{
-			wait(&status);
+			// wait(&status);
+			// sleep(1);
+			waitpid(0, &status, 0);
+			// wait(0);
+			printf("status = %d\n", WIFEXITED(status));
+			if (!WIFEXITED(status))
+				printf("error = %d, errno = %d\n", WEXITSTATUS(status), errno);
 			close(all->pipefd[1]);
 			if (status > 0)
 				g_exit = 1;

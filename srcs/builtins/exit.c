@@ -30,7 +30,7 @@ void	ft_exit(t_all *all)
 	// if ((all->words && !all->words[1]) || !all->words)
 	if (!all->words)
 		exit(g_exit);
-	ft_putendl_fd("exit", 1);
+	ft_putendl_fd("exit", 2);
 	if (all->words && !all->words[1])
 		exit(g_exit);
 	if (all->words[1])

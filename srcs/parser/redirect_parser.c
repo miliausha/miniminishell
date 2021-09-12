@@ -3,7 +3,7 @@
 void	redirect_parser(char *line, t_all *all, int *i)
 {
 	all->flag_redir = 0;
-	if (line[*i - 1] != ' ' && line[*i - 1])
+	if (*i > 0 && all->arg && line[*i - 1] != ' ' && line[*i - 1])
 		add_words(all);
 	if (line[*i] == '>' && line[(*i) + 1] == '>')
 	{

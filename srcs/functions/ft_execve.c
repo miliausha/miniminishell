@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+
+
 /*
 **	char	*get_cmd_path(char **env, char **arr)
 **		find the path (by using function 'which') where
@@ -24,6 +26,7 @@ static char	*get_cmd_path(t_all *all, char **arr)
 	pid_t	pid;
 	char	*path;
 
+	
 	path = NULL;
 	if (pipe(p) < 0)
 		exit(EXIT_FAILURE);
@@ -35,6 +38,10 @@ static char	*get_cmd_path(t_all *all, char **arr)
 		close(p[0]);
 		dup2(p[1], 1);
 		execve("/usr/bin/which", arr, all->env);
+		if (arr[0] && arr[1])
+			perror(arr[1]);
+		close(p[1]);
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
@@ -74,25 +81,34 @@ char	**offset_arr(char **arr, char *str)
 int	ft_execve_func(char *path, t_all *all)
 {
 	pid_t	pid;
-	int		fd[2];
+	int		status;
+	// int		fd[2];
 
-	if (pipe(fd) < 0)
-		exit(EXIT_FAILURE);
+	// if (pipe(fd) < 0)
+	// 	exit(EXIT_FAILURE);
+	// printf("path = %s\n", path);
+	// int i = 0;
+	// while (all->words[i])
+	// 	printf("words = %s\n", all->words[i++]);
+	status = 0;
 	pid = fork();
 	if (pid == -1)
 		exit(EXIT_FAILURE);
 	else if (pid == 0)
 	{
-		close(fd[0]);
 		execve(path, all->words, all->env);
-		close(fd[1]);
+		if (all->words[0] && all->words[1])
+			perror(all->words[1]);
+		// close(fd[1]);
 		exit(EXIT_FAILURE);
 	}
 	else
 	{
-		wait(0);
-		close(fd[1]);
-		close(fd[0]);
+		wait(&status);
+		g_exit = status / 256;
+		//printf("status = %d\n", status);
+		// close(fd[1]);
+		// close(fd[0]);
 	}
 	return (0);
 }
@@ -102,10 +118,10 @@ void	execve_cmd(t_all *all)
 	char	*cmd_path;
 	char	**arr;
 
+	set_signals(1);
 	arr = offset_arr(all->words, "minishell");
 	if (!arr)
-		return ;
-	set_signals(1);
+		exit(EXIT_FAILURE);
 	cmd_path = get_cmd_path(all, arr);
 	if (!cmd_path || (cmd_path && !cmd_path[0]))
 		cmd_not_found(all->words[0]);
@@ -118,6 +134,8 @@ void	execve_cmd(t_all *all)
 	{
 		g_exit = 0;
 		execve(cmd_path, all->words, all->env);
+		g_exit = errno;
+		exit(g_exit);
 	}
 	set_signals(0);
 	free_arr((void **)arr);
