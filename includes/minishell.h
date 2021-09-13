@@ -1,11 +1,12 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include <curses.h> //tgetflag
-# include <term.h> //tgetflag
 # include <stdlib.h>
 # include <fcntl.h>
 # include <errno.h>
@@ -32,6 +33,7 @@ typedef struct s_all
 	char				**words;
 	struct termios		s_term;
 	struct sigaction	s_sig;
+	struct stat			s_stat;
 }				t_all;
 
 int	g_exit;
@@ -73,6 +75,7 @@ int		env_len(char *s);	//env_utils
 void	free_arr(void **arr); //free.c
 void	error(char *str1, char *str2, char *str3);
 void	cmd_not_found(char *s);
+int		is_file_dir_exists(t_all *all);
 
 char	*env_path_search(char **env, char *str); //env_utils
 void	update_env(t_all *all, char *str, char *pwd); //env_utils

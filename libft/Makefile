@@ -52,7 +52,7 @@ OBJ = $(SRC:.c=.o)
 BONUSOBJ = $(BONUS:.c=.o)
 
 .c.o:
-	gcc -Wall -Wextra -Werror -g -c $< -o $(<:.c=.o)
+	gcc -Wall -Wextra -Werror -c $< -o $(<:.c=.o)
 
 all: $(NAME)
 
