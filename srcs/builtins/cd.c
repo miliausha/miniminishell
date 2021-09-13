@@ -7,9 +7,9 @@ void	update_pwd(t_all *all)
 
 	getcwd(pwd, 1000);
 	path = env_path_search(all->env, "PWD=");
-	update_env(all, "OLDPWD=", path);
+	update_env(all, "OLDPWD", path);
 	free(path);
-	update_env(all, "PWD=", pwd);
+	update_env(all, "PWD", pwd);
 	g_exit = 0;
 }
 

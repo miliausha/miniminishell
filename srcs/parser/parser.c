@@ -106,7 +106,6 @@ int	start_parsing(t_all *all, char *line)
 			i += 2;
 			// printf("add arg2\n");
 		}
-		
 		// printf("arg = %s\n", all->arg);
 	}
 	check_redirect(all, line, &i);

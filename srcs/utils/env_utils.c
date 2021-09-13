@@ -20,7 +20,9 @@ char	*env_path_search(char **env, char *str)
 void	update_env(t_all *all, char *str, char *pwd)
 {
 	int		i;
+	int		len;
 	char	**tmp;
+	char	*tmp1;
 
 	i = -1;
 	tmp = ft_calloc(sizeof(char *), ft_strlen_arr(all->env) + 1);
@@ -28,8 +30,15 @@ void	update_env(t_all *all, char *str, char *pwd)
 		return ;
 	while (all->env[++i])
 	{
-		if (!ft_strncmp(all->env[i], str, ft_strlen(str)))
-			tmp[i] = ft_strjoin(ft_strdup(str), ft_strdup(pwd));
+		len = 0;
+		while (all->env[i][len] != '=')
+			len++;
+		if (!ft_strncmp(all->env[i], str, ft_strlen(str)) && \
+			!ft_strncmp(all->env[i], str, len))
+		{	
+			tmp1 = ft_strjoin(ft_strdup(str), ft_strdup("="));
+			tmp[i] = ft_strjoin(tmp1, ft_strdup(pwd));
+		}
 		else
 			tmp[i] = ft_strdup(all->env[i]);
 	}
@@ -47,9 +56,16 @@ char	**dup_env(char **env)
 	while (env[i])
 		i++;
 	ret = (char **)malloc((sizeof(char *) + 1) * i);
+	// if (!ret)
+	// 	return (NULL);
+	// ret[i] = NULL;
+	// while (i--)
+	// 	ret[i] = ft_strdup(env[i]);
+	ret = (char **)malloc((sizeof(char *) + 2) * i);
 	if (!ret)
 		return (NULL);
-	ret[i] = NULL;
+	ret[i + 1] = NULL;
+	ret[i] = ft_strdup("OLDPWD");
 	while (i--)
 		ret[i] = ft_strdup(env[i]);
 	return (ret);
