@@ -28,9 +28,9 @@ void	skip_whitespace(char *line, int *i)
 
 void	cmd_not_found(char *s)
 {
-	ft_putstr_fd("minishell: ", 1);
-	ft_putstr_fd(s, 1);
-	ft_putstr_fd(": command not found\n", 1);
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(s, 2);
+	ft_putstr_fd(": command not found\n", 2);
 	g_exit = 127;
 }
 

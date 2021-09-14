@@ -29,8 +29,12 @@ void	builtins(t_all *all)
 void	run_commands(t_all *all)
 {
 	if (!all->words)
+	{
+		all->flag_fd = 0;
 		return ;
-	builtins(all);
+	}
+	if (all->flag_fd != 2)
+		builtins(all);
 	if (all->redir && !all->pipe_flag)
 	{
 		dup2(all->fd_0, 0);
@@ -42,6 +46,7 @@ void	run_commands(t_all *all)
 		free_arr((void **)all->words);
 		all->words = NULL;
 	}
+	all->flag_fd = 0;
 }
 
 void	check_redirect(t_all *all, char *line, int *i)

@@ -31,6 +31,7 @@ static void	init(t_all *all, int ac, char **av, char **env)
 	all->redir_file = NULL;
 	all->parts = NULL;
 	g_exit = 0;
+	all->flag_fd = 0;
 	rl_outstream = stderr;
 }
 

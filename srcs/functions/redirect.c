@@ -72,16 +72,18 @@ void	redirect(t_all *all, char *line, int *i)
 	{
 		wrong_fd(all, line, i, &fd);
 		return ;
-	}
+	} 
 	if (all->flag_redir == 1 || all->flag_redir == 2)
-		if (all->words)
+		if (all->words && !all->flag_fd)
 			dup2(fd, 1);
 	if (all->flag_redir == 3)
-		if (all->words)
+		if (all->words && !all->flag_fd)
 			dup2(fd, 0);
 	if (all->flag_redir == 4)
 		heredoc(all, &fd);
 	g_exit = 0;
+	if (all->flag_fd == 2)
+		g_exit = 1;
 	all->flag_redir = 0;
 	all->redir = 1;
 	close(fd);
