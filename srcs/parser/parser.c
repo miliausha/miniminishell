@@ -5,19 +5,19 @@ void	builtins(t_all *all)
 	int	len;
 
 	len = ft_strlen(all->words[0]);
-	if (!ft_strncmp(all->words[0], "echo", len))
+	if (!ft_strncmp(all->words[0], "echo", len) && len == 4)
 		print_echo(all);
-	else if (!ft_strncmp(all->words[0], "cd", len))
+	else if (!ft_strncmp(all->words[0], "cd", len) && len == 2)
 		print_cd(all);
-	else if (!ft_strncmp(all->words[0], "pwd", len))
+	else if (!ft_strncmp(all->words[0], "pwd", len) && len == 3)
 		get_pwd();
-	else if (!ft_strncmp(all->words[0], "export", len))
+	else if (!ft_strncmp(all->words[0], "export", len) && len == 6)
 		print_export(all);
-	else if (!ft_strncmp(all->words[0], "exit", len))
+	else if (!ft_strncmp(all->words[0], "exit", len) && len == 4)
 		ft_exit(all);
-	else if (!ft_strncmp(all->words[0], "unset", len))
+	else if (!ft_strncmp(all->words[0], "unset", len) && len == 5)
 		ft_unset(all);
-	else if (!ft_strncmp(all->words[0], "env", len))
+	else if (!ft_strncmp(all->words[0], "env", len) && len == 3)
 		print_env(all);
 	else
 	{
@@ -31,6 +31,8 @@ void	run_commands(t_all *all)
 	if (!all->words)
 	{
 		all->flag_fd = 0;
+		dup2(all->fd_0, 0);
+		dup2(all->fd_1, 1);
 		return ;
 	}
 	if (all->flag_fd != 2)
@@ -48,7 +50,6 @@ void	run_commands(t_all *all)
 	}
 	all->flag_fd = 0;
 	// printf("g_exit run_commands = %d\n", g_exit);
-
 }
 
 void	check_redirect(t_all *all, char *line, int *i)
@@ -60,7 +61,10 @@ void	check_redirect(t_all *all, char *line, int *i)
 		else
 		{
 			if (all->redir_file)
+			{
 				free(all->redir_file);
+				all->redir_file = NULL;
+			}
 			all->redir_file = ft_strdup(all->arg);
 			free(all->arg);
 			all->arg = NULL;
@@ -123,6 +127,7 @@ void	parser(t_all *all, char *line)
 {
 	all->pipe_flag = 0;
 	all->redir = 0;
+	all->redir_file = NULL;
 	all->parts = minishell_split(line, '|');
 	if (ft_strlen_arr(all->parts) > 500)
 	{

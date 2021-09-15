@@ -4,18 +4,21 @@ char	*join_quotes(char *env)
 {
 	char	*env_copy;
 
+	env_copy = NULL;
 	if (ft_strchr(env, '=') && ft_strchr(env, '=') + 1)
 	{
-		env_copy = ft_strtrim(env, ft_strchr(env, '=') + 1);
-		if (env_copy[ft_strlen(env_copy) - 1] != '=')
-			env_copy = ft_strjoin(env_copy, ft_strdup("="));
+		env_copy = ft_substr(env, 0, ft_strlen(env) - \
+			ft_strlen(ft_strchr(env, '=') + 1));
+		// if (env_copy[ft_strlen(env_copy) - 1] != '=')
+		// 	env_copy = ft_strjoin(env_copy, ft_strdup("="));
 		env_copy = ft_strjoin(env_copy, ft_strdup("\""));
 		env_copy = ft_strjoin(env_copy, ft_strdup(ft_strchr(env, '=') + 1));
 		env_copy = ft_strjoin(env_copy, ft_strdup("\""));
 	}
 	else if (ft_strchr(env, '=') && !ft_strchr(env, '=') + 1)
 	{
-		env_copy = ft_strtrim(env, ft_strchr(env, '=') + 1);
+		env_copy = ft_substr(env, 0, ft_strlen(env) - \
+			ft_strlen(ft_strchr(env, '=') + 1));
 		env_copy = ft_strjoin(env_copy, ft_strdup(""""));
 	}
 	else
@@ -41,6 +44,33 @@ char	**env_copy_with_quotes(char **env)
 	return (env_copy);
 }
 
+char	*plus_match_cicle(char *env, char *words, int *match)
+{
+	int		len;
+	int		len1;
+	char	*copy;
+	char	*tmp_env;
+
+	len = 0;
+	len1 = 0;
+	copy = NULL;
+	while (env[len] != '=' && env[len])
+		len++;
+	while (words[len1] != '+')
+		len1++;
+	tmp_env = ft_strdup(env);
+	if (!ft_strncmp(env, words, len) && !ft_strncmp(env, words, len1))
+	{
+		if (env[len] != '=')
+			tmp_env = ft_strjoin(tmp_env, ft_strdup("="));
+		copy = ft_strjoin(tmp_env, ft_strdup(ft_strchr(words, '=') + 1));
+		(*match)++;
+	}
+	else
+		copy = ft_strdup(env);
+	return (copy);
+}
+
 char	*match_cicle(char *env, char *tmp, char *words, int *match)
 {
 	int		len;
@@ -48,18 +78,23 @@ char	*match_cicle(char *env, char *tmp, char *words, int *match)
 
 	len = 0;
 	copy = NULL;
-	while (env[len] != '=')
+	while (env[len] != '=' && env[len])
 		len++;
-	if (!ft_strncmp(env, tmp, len) && !ft_strncmp(env, tmp, ft_strlen(tmp)))
-	{
-		if (!ft_strchr(words, '=') && ft_strchr(env, '='))
-			copy = ft_strdup(env);
-		else
-			copy = ft_strdup(words);
-		(*match)++;
-	}
+	if (ft_strchr(words, '+') && (ft_strchr(words, '+') + 1) == ft_strchr(words, '='))
+		copy = plus_match_cicle(env, words, match);
 	else
-		copy = ft_strdup(env);
+	{
+		if (!ft_strncmp(env, tmp, len) && !ft_strncmp(env, tmp, ft_strlen(tmp)))
+		{
+			if (!ft_strchr(words, '=') && ft_strchr(env, '='))
+				copy = ft_strdup(env);
+			else
+				copy = ft_strdup(words);
+			(*match)++;
+		}
+		else
+			copy = ft_strdup(env);
+	}
 	return (copy);
 }
 

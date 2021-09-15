@@ -49,6 +49,7 @@ void	print_env(t_all *all);	//env.c
 void	ft_exit(t_all *all); //exit.c
 void	execve_cmd(t_all *all);	//ft_execve
 void	print_export(t_all *all); //export.c
+char	*cut_plus(char *words); //export.c
 void	ft_unset(t_all *all); // unset.c
 void	sort_env(char **env_sorted); // env.c
 void	get_pwd(void);

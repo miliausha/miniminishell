@@ -1,5 +1,28 @@
 #include "minishell.h"
 
+char	*cut_plus(char *words)
+{
+	// printf("check\n");
+	char	*tmp;
+	int		i;
+	int		j;
+
+	i = 0;
+	while(words[i] != '+')
+		i++;
+	tmp = ft_calloc(sizeof(char), i + 1);
+	if (!tmp)
+		return (NULL);
+	j = 0;
+	while (j < i)
+	{
+		tmp[j] = words[j];
+		j++; 
+	}
+	tmp = ft_strjoin(tmp, ft_strdup(ft_strchr(words, '=')));
+	return (tmp);	
+}
+
 void	join_arg(t_all *all, char *words)
 {
 	char	**tmp;
@@ -15,7 +38,10 @@ void	join_arg(t_all *all, char *words)
 			tmp[len] = ft_strdup(all->env[len]);
 			len++;
 		}
-		tmp[len] = ft_strdup(words);
+		if (ft_strchr(words, '+') && (ft_strchr(words, '+') + 1) == ft_strchr(words, '='))
+			tmp[len] = cut_plus(words);
+		else
+			tmp[len] = ft_strdup(words);
 		free_arr((void **)all->env);
 		all->env = env_copy(tmp);
 		free_arr((void **)tmp);
@@ -55,8 +81,9 @@ int	check_words(char *words)
 	j = 1;
 	while (j < (int)ft_strlen(words) && words[j] != '=')
 	{
-		if (!ft_isalpha(words[j]) && \
-			!ft_isdigit(words[j]) && words[j] != '_')
+		if ((!ft_isalpha(words[j]) && \
+			!ft_isdigit(words[j]) && words[j] != '_' && words[j] != '+') ||\
+			(words[j] == '+' && (words[j + 1] == '+' || words[j + 1] != '=')))
 		{
 			error("minishell: export: `", words, \
 				"': not a valid identifier");

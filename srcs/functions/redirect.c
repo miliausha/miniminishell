@@ -44,20 +44,33 @@ void	heredoc(t_all *all, int *fd)
 		dup2(*fd, 0);
 }
 
+// void	double_redirect()
+
 void	wrong_fd(t_all *all, char *line, int *i, int *fd)
 {
+	while (line[*i])
+	{
+		// if (line[*i] == '<' && line[*i + 1] == '<')
+		// {
+		// 	check 
+		// }
+		(*i)++;
+	}
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(all->redir_file, 2);
 	ft_putstr_fd(": ", 2);
 	ft_putendl_fd(strerror(errno), 2);
-	while (line[*i])
-		(*i)++;
 	all->flag_redir = 0;
 	all->redir = 0;
 	if (all->words)
 	{
 		free_arr((void **)all->words);
 		all->words = NULL;
+	}
+	if (all->redir_file)
+	{		
+		free(all->redir_file);
+		all->redir_file = NULL;
 	}
 	close(*fd);
 	g_exit = 1;
