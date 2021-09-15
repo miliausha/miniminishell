@@ -140,9 +140,9 @@ void	execve_cmd(t_all *all)
 	else
 	{
 		g_exit = 0;
-		execve(cmd_path, all->words, all->env);
-		// printf("cmd path = %s, errno = %d\n", cmd_path, errno);
-		g_exit = errno;
+		g_exit = execve(cmd_path, all->words, all->env);
+		printf("cmd path = %s, errno = %d\n", cmd_path, errno);
+		// g_exit = errno;
 		exit(g_exit);
 	}
 	// printf("g_exit execve_cmd1 = %d\n", g_exit);

@@ -100,5 +100,12 @@ int	preparser(char *line)
 {
 	if (unspec_special_chars(line))
 		return (1);
+	if (line && line[0] == '|')
+	{
+		ft_putendl_fd("minishell: syntax error near unexpected token `|'",
+			2);
+		g_exit = 258;
+		return (1);
+	}
 	return (0);
 }
