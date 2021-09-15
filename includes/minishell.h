@@ -21,6 +21,7 @@ typedef struct s_all
 	int					fd_0;
 	int					fd_1;
 	int					flag_fd;
+	int					flag_quot;
 	int					pipefd[2];
 	int					fd_in;
 	int					redir;

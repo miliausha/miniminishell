@@ -32,6 +32,7 @@ static void	init(t_all *all, int ac, char **av, char **env)
 	all->parts = NULL;
 	g_exit = 0;
 	all->flag_fd = 0;
+	all->flag_quot = 0;
 	rl_outstream = stderr;
 }
 

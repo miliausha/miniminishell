@@ -3,6 +3,8 @@
 void	quote_parser(char *line, t_all *all, int *i, char c)
 {
 	(*i)++;
+
+	all->flag_quot = 1;
 	while (line[(*i)] && line[(*i)] != c)
 	{
 		if (c == '\"' && line[*i] == '\\' && \
@@ -20,4 +22,5 @@ void	quote_parser(char *line, t_all *all, int *i, char c)
 			add_arg(all, line[(*i)++]);
 	}
 	(*i)++;
+	all->flag_quot = 0;
 }

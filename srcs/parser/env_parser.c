@@ -21,8 +21,12 @@ char	*get_result(t_all *all, char *res, char **tmp)
 		res = env_path_search(all->env, *tmp);
 
 	// printf("res = |%s|, tmp = |%s|\n", res, *tmp);
-	if (!res && all->words && !ft_isdigit(*tmp[0]))
-		res = NULL;//ft_strdup("");
+	if (!res  && !ft_isdigit(*tmp[0]) && all->flag_quot) //&&all->words
+	{
+		res = ft_strdup("");
+	}
+	else if (!res && !ft_isdigit(*tmp[0])) // && all->words
+		res = NULL;
 	free(*tmp);
 	if (!res && !all->words)
 		return (NULL);
