@@ -47,6 +47,8 @@ void	run_commands(t_all *all)
 		all->words = NULL;
 	}
 	all->flag_fd = 0;
+	// printf("g_exit run_commands = %d\n", g_exit);
+
 }
 
 void	check_redirect(t_all *all, char *line, int *i)
@@ -111,7 +113,6 @@ int	start_parsing(t_all *all, char *line)
 			i += 2;
 			// printf("add arg2\n");
 		}
-		// printf("arg = %s\n", all->arg);
 	}
 	check_redirect(all, line, &i);
 	free(all->arg);
@@ -143,4 +144,6 @@ void	parser(t_all *all, char *line)
 	}
 	free_arr((void **)all->parts);
 	all->parts = NULL;
+	// printf("g_exit parser = %d\n", g_exit);
+
 }

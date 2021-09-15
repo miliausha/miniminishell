@@ -19,8 +19,10 @@ char	*get_result(t_all *all, char *res, char **tmp)
 		res = ft_itoa(g_exit);
 	else
 		res = env_path_search(all->env, *tmp);
+
+	// printf("res = |%s|, tmp = |%s|\n", res, *tmp);
 	if (!res && all->words && !ft_isdigit(*tmp[0]))
-		res = ft_strdup(" ");
+		res = NULL;//ft_strdup("");
 	free(*tmp);
 	if (!res && !all->words)
 		return (NULL);
