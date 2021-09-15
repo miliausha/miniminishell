@@ -13,6 +13,7 @@
 # include <string.h>
 # include <signal.h>
 # include <termios.h>
+#include <sys/time.h> //del
 
 # include "libft.h"
 
@@ -36,6 +37,8 @@ typedef struct s_all
 	struct termios		s_term;
 	struct sigaction	s_sig;
 	struct stat			s_stat;
+	struct timeval		tv; //del
+	long	start;	//del
 }				t_all;
 
 int	g_exit;

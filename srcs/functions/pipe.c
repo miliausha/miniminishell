@@ -8,9 +8,12 @@ void	child_process(t_all *all, int i)
 	close(all->pipefd[0]);
 	start_parsing(all, all->parts[i]);
 	// printf("before commands errno = %d\n", errno);
+	gettimeofday(&all->tv, NULL);
+	printf("time1 = %ld\n", all->tv.tv_sec * 1000 + all->tv.tv_usec / 1000 - all->start);
 	run_commands(all);
 	// printf("errno = %d\n", errno);
 	// printf("g_exit = %d\n", g_exit);
+	
 	exit(g_exit);
 }
 
@@ -33,14 +36,24 @@ void	run_pipe(t_all *all)
 		if (pid < 0)
 			exit(EXIT_FAILURE);
 		else if (pid == 0)
+		{
+			gettimeofday(&all->tv, NULL);
+			printf("time2 = %ld\n", all->tv.tv_sec * 1000 + all->tv.tv_usec / 1000 - all->start);
 			child_process(all, i);
+		}
 		else
 		{
+			gettimeofday(&all->tv, NULL);
+			printf("time3 = %ld\n", all->tv.tv_sec * 1000 + all->tv.tv_usec / 1000 - all->start);
+			sleep(1);
 			waitpid(pid, &status, 0);
+			gettimeofday(&all->tv, NULL);
+			printf("time4 = %ld\n", all->tv.tv_sec * 1000 + all->tv.tv_usec / 1000 - all->start);
 			if (WIFEXITED(status))
 			{
 				g_exit = WEXITSTATUS(status);
-				// printf("ret = %d, status = %d\n", ret, status);
+				// sleep(5);
+				printf("g_exit = %d, status = %d\n", g_exit, status);
 				// g_exit = ret;
 			}
 
