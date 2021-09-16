@@ -69,7 +69,7 @@ int	main(int ac, char **av, char **env)
 		gettimeofday(&all.tv, NULL);
 		all.start = all.tv.tv_sec * 1000 + all.tv.tv_usec / 1000;
 		// printf("start = %ld\n", all.start);
-		usleep(50);
+		// usleep(50);
 		line = get_line(&all);
 		if (!preparser(line))
 			parser(&all, line);

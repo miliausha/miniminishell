@@ -24,8 +24,10 @@ typedef struct s_all
 	int					flag_fd;
 	int					flag_quot;
 	int					pipefd[2];
+	int					pipe_count;
 	int					fd_in;
 	int					redir;
+	int					g_r;
 	int					flag_redir;
 	int					pipe_flag;
 	char				*arg;

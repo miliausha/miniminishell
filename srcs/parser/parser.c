@@ -49,6 +49,7 @@ void	run_commands(t_all *all)
 		all->words = NULL;
 	}
 	all->flag_fd = 0;
+	all->g_r = 0;
 	// printf("g_exit run_commands = %d\n", g_exit);
 }
 
@@ -69,6 +70,8 @@ void	check_redirect(t_all *all, char *line, int *i)
 			free(all->arg);
 			all->arg = NULL;
 			redirect(all, line, i);
+			free(all->redir_file);
+			all->redir_file = NULL;
 		}
 	}
 	skip_whitespace(line, i);
@@ -119,7 +122,11 @@ int	start_parsing(t_all *all, char *line)
 		}
 	}
 	check_redirect(all, line, &i);
-	free(all->arg);
+	// if (all->arg)
+	// {
+	// 	free(all->arg);
+	// 	all->arg = NULL;
+	// }
 	return (0);
 }
 
@@ -127,8 +134,11 @@ void	parser(t_all *all, char *line)
 {
 	all->pipe_flag = 0;
 	all->redir = 0;
+	all->g_r = 0;
+	all->flag_fd = 0;
 	all->redir_file = NULL;
 	all->parts = minishell_split(line, '|');
+	all->pipe_count = ft_strlen_arr(all->parts) - 1;
 	if (ft_strlen_arr(all->parts) > 500)
 	{
 		g_exit = 128;
