@@ -16,9 +16,9 @@ void	check_exit_arg(char *str)
 		}
 		i++;
 	}
-	if ((ft_strlen(str) == 19 && ft_strncmp(str, "9223372036854775807", 20) > 0) \
-		|| (ft_strlen(str) == 20 && ft_strncmp(str, "-9223372036854775808", 21) > 0) \
-		|| ft_strlen(str) > 20)
+	if ((ft_strlen(str) == 19 && ft_strncmp(str, "9223372036854775807",
+				20) > 0) || (ft_strlen(str) == 20 && ft_strncmp(str,
+				"-9223372036854775808", 21) > 0) || ft_strlen(str) > 20)
 	{
 		error("minishell: exit: ", str, ": numeric argument required");
 		exit(255);
@@ -27,7 +27,6 @@ void	check_exit_arg(char *str)
 
 void	ft_exit(t_all *all)
 {
-	// if ((all->words && !all->words[1]) || !all->words)
 	if (!all->words)
 		exit(g_exit);
 	ft_putendl_fd("exit", 2);

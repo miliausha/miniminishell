@@ -26,17 +26,9 @@ void	skip_whitespace(char *line, int *i)
 		(*i)++;
 }
 
-void	cmd_not_found(char *s)
-{
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(s, 2);
-	ft_putstr_fd(": command not found\n", 2);
-	g_exit = 127;
-}
-
 int	is_file_dir_exists(t_all *all)
 {
-	int status;
+	int	status;
 
 	status = 0;
 	all->s_stat.st_mode = 0;
@@ -60,4 +52,19 @@ int	is_file_dir_exists(t_all *all)
 	else
 		return (1);
 	return (0);
+}
+
+int	open_file(t_all *all)
+{
+	int	fd;
+
+	if (all->flag_redir == 1)
+		fd = open(all->redir_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (all->flag_redir == 2)
+		fd = open(all->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0666);
+	if (all->flag_redir == 3)
+		fd = open(all->redir_file, O_RDONLY);
+	if (all->flag_redir == 4)
+		fd = open("heredoc.tmp", O_WRONLY | O_CREAT | O_APPEND, 0666);
+	return (fd);
 }

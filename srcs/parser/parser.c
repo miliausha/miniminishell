@@ -1,5 +1,16 @@
 #include "minishell.h"
 
+static void	init_parser(t_all *all, char *line)
+{
+	all->pipe_flag = 0;
+	all->redir = 0;
+	all->f_r = 0;
+	all->flag_fd = 0;
+	all->redir_file = NULL;
+	all->parts = minishell_split(line, '|');
+	all->pipe_count = ft_strlen_arr(all->parts) - 1;
+}
+
 void	builtins(t_all *all)
 {
 	int	len;
@@ -49,32 +60,7 @@ void	run_commands(t_all *all)
 		all->words = NULL;
 	}
 	all->flag_fd = 0;
-	all->g_r = 0;
-	// printf("g_exit run_commands = %d\n", g_exit);
-}
-
-void	check_redirect(t_all *all, char *line, int *i)
-{
-	if (all->arg)
-	{
-		if (!all->flag_redir)
-			add_words(all);
-		else
-		{
-			if (all->redir_file)
-			{
-				free(all->redir_file);
-				all->redir_file = NULL;
-			}
-			all->redir_file = ft_strdup(all->arg);
-			free(all->arg);
-			all->arg = NULL;
-			redirect(all, line, i);
-			free(all->redir_file);
-			all->redir_file = NULL;
-		}
-	}
-	skip_whitespace(line, i);
+	all->f_r = 0;
 }
 
 int	start_parsing(t_all *all, char *line)
@@ -84,61 +70,30 @@ int	start_parsing(t_all *all, char *line)
 	i = 0;
 	while (line[i])
 	{
-		// ft_putstr_fd("line [i] = |", 2);
-		// ft_putchar_fd(line[i], 2);
-		// ft_putstr_fd("|\t", 2);
 		if (line[i] == '\'' || line[i] == '\"')
-		{
 			quote_parser(line, all, &i, line[i]);
-			// printf("quote parser\n");
-		}
 		else if (line[i] == '$' && line[i + 1] && line[i + 1] != ' ' \
 			&& line[i + 1] != '\"')
-		{
 			env_parser(line, all, &i);
-			// printf("env parser\n");
-		}
 		else if (ft_strchr("<>", line[i]))
-		{
-
 			redirect_parser(line, all, &i);
-			// printf("redir parser\n");
-		}
 		else if (line[i] == ' ')
-		{
 			check_redirect(all, line, &i);
-			// printf("check redir\n");
-		}
 		else if (line[i] != '\\')
-		{
 			add_arg(all, line[i++]);
-			// printf("add arg\n");
-		}
 		else if (line[i] == '\\' && line[i + 1])
 		{
 			add_arg(all, line[i + 1]);
 			i += 2;
-			// printf("add arg2\n");
 		}
 	}
 	check_redirect(all, line, &i);
-	// if (all->arg)
-	// {
-	// 	free(all->arg);
-	// 	all->arg = NULL;
-	// }
 	return (0);
 }
 
 void	parser(t_all *all, char *line)
 {
-	all->pipe_flag = 0;
-	all->redir = 0;
-	all->g_r = 0;
-	all->flag_fd = 0;
-	all->redir_file = NULL;
-	all->parts = minishell_split(line, '|');
-	all->pipe_count = ft_strlen_arr(all->parts) - 1;
+	init_parser(all, line);
 	if (ft_strlen_arr(all->parts) > 500)
 	{
 		g_exit = 128;
@@ -159,6 +114,4 @@ void	parser(t_all *all, char *line)
 	}
 	free_arr((void **)all->parts);
 	all->parts = NULL;
-	// printf("g_exit parser = %d\n", g_exit);
-
 }

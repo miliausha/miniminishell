@@ -1,5 +1,19 @@
 #include "minishell.h"
 
+int	env_len(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+	{
+		if (!(ft_isalnum(s[i]) || s[i] == '_'))
+			return (i + 1);
+		i++;
+	}
+	return (i + 1);
+}
+
 char	*env_path_search(char **env, char *str)
 {
 	char	*path;
@@ -27,12 +41,10 @@ void	update_env(t_all *all, char *str, char *pwd)
 	i = -1;
 	tmp = ft_calloc(sizeof(char *), ft_strlen_arr(all->env) + 1);
 	if (!tmp)
-		return ;
+		exit (EXIT_FAILURE);
 	while (all->env[++i])
 	{
-		len = 0;
-		while (all->env[i][len] != '=')
-			len++;
+		len = env_len(all->env[i]) - 1;
 		if (!ft_strncmp(all->env[i], str, ft_strlen(str)) && \
 			!ft_strncmp(all->env[i], str, len))
 		{	
@@ -55,12 +67,6 @@ char	**dup_env(char **env)
 	i = 0;
 	while (env[i])
 		i++;
-	ret = (char **)malloc((sizeof(char *) + 1) * i);
-	// if (!ret)
-	// 	return (NULL);
-	// ret[i] = NULL;
-	// while (i--)
-	// 	ret[i] = ft_strdup(env[i]);
 	ret = (char **)malloc((sizeof(char *) + 2) * i);
 	if (!ret)
 		return (NULL);
@@ -69,20 +75,6 @@ char	**dup_env(char **env)
 	while (i--)
 		ret[i] = ft_strdup(env[i]);
 	return (ret);
-}
-
-int	env_len(char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-	{
-		if (!(ft_isalnum(s[i]) || s[i] == '_'))
-			return (i + 1);
-		i++;
-	}
-	return (i + 1);
 }
 
 char	**env_copy(char **env)

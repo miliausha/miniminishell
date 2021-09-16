@@ -19,13 +19,11 @@ char	*get_result(t_all *all, char *res, char **tmp)
 		res = ft_itoa(g_exit);
 	else
 		res = env_path_search(all->env, *tmp);
-
-	// printf("res = |%s|, tmp = |%s|\n", res, *tmp);
-	if (!res  && !ft_isdigit(*tmp[0]) && all->flag_quot) //&&all->words
+	if (!res && !ft_isdigit(*tmp[0]) && all->flag_quot)
 	{
 		res = ft_strdup("");
 	}
-	else if (!res && !ft_isdigit(*tmp[0])) // && all->words
+	else if (!res && !ft_isdigit(*tmp[0]))
 		res = NULL;
 	free(*tmp);
 	if (!res && !all->words)
@@ -59,10 +57,7 @@ void	env_parser(char *line, t_all *all, int *i)
 		add_tmp(&tmp, '=');
 	}
 	else
-	{
-		add_arg(all, line[*i]);
-		(*i)++;
-	}
+		add_arg(all, line[(*i)++]);
 	if (tmp)
 	{
 		res = get_result(all, res, &tmp);

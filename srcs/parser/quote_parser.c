@@ -3,8 +3,9 @@
 void	quote_parser(char *line, t_all *all, int *i, char c)
 {
 	(*i)++;
-
 	all->flag_quot = 1;
+	if (line[*i] == c)
+		add_arg(all, 0);
 	while (line[(*i)] && line[(*i)] != c)
 	{
 		if (c == '\"' && line[*i] == '\\' && \

@@ -68,3 +68,11 @@ void	add_words(t_all *all)
 	all->arg = NULL;
 	all->words = arr;
 }
+
+void	cmd_not_found(char *s)
+{
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(s, 2);
+	ft_putstr_fd(": command not found\n", 2);
+	g_exit = 127;
+}

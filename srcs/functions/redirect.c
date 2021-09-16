@@ -1,46 +1,10 @@
 #include "minishell.h"
 
-int	open_file(t_all *all)
-{
-	int	fd;
-
-	if (all->flag_redir == 1)
-		fd = open(all->redir_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (all->flag_redir == 2)
-		fd = open(all->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0666);
-	if (all->flag_redir == 3)
-		fd = open(all->redir_file, O_RDONLY);
-	if (all->flag_redir == 4)
-		fd = open("heredoc.tmp", O_WRONLY | O_CREAT | O_APPEND, 0666);
-	return (fd);
-}
-
-int	check_double_redirect(char *line, int *i)
-{
-	int	n;
-
-	n = *i;
-	if  (line[*i] && line[*i + 1])
-	{
-		skip_whitespace(line, &n);
-		if (line[n] == '<' && line[n + 1] == '<')
-			return(1);
-	}
-	return (0);
-}
-
-void	heredoc(t_all *all, int *fd, char *str, int *i)
+void	read_from_redirect(t_all *all, char **tmp)
 {
 	char	*line;
-	char	*tmp;
 
-	tmp = ft_calloc(sizeof(char), 1);
 	line = ft_calloc(sizeof(char), 1);
-	if (all->g_r != 1)
-	{
-		dup2(all->fd_0, 0);
-		dup2(all->fd_1, 1);
-	}
 	while (ft_strncmp(all->redir_file, line, \
 		ft_strlen(all->redir_file) + 1))
 	{
@@ -50,13 +14,27 @@ void	heredoc(t_all *all, int *fd, char *str, int *i)
 		if (ft_strncmp(all->redir_file, line, \
 			ft_strlen(all->redir_file) + 1))
 		{
-			tmp = ft_strjoin(tmp, ft_strdup("\n"));
-			tmp = ft_strjoin(tmp, ft_strdup(line));
+			*tmp = ft_strjoin(*tmp, ft_strdup("\n"));
+			*tmp = ft_strjoin(*tmp, ft_strdup(line));
 		}
 		free(line);
 	}
+}
+
+void	heredoc(t_all *all, int *fd, char *str, int *i)
+{
+	char	*tmp;
+
+	tmp = ft_calloc(sizeof(char), 1);
+	if (all->f_r != 1)
+	{
+		dup2(all->fd_0, 0);
+		dup2(all->fd_1, 1);
+	}
+	read_from_redirect(all, &tmp);
 	ft_putstr_fd(tmp + 1, *fd);
-	ft_putchar_fd('\n', *fd);
+	if (ft_strlen(tmp + 1) > 0)
+		ft_putchar_fd('\n', *fd);
 	close(*fd);
 	free(tmp);
 	if (!check_double_redirect(str, i))
@@ -68,14 +46,10 @@ void	heredoc(t_all *all, int *fd, char *str, int *i)
 	unlink("heredoc.tmp");
 }
 
-void	wrong_fd(t_all *all, char *line, int *i, int *fd)
+void	heredoc_redirection(t_all *all, char *line, int *i)
 {
-	int fd_1;
-	char	*tmp_redir;
+	int	fd_1;
 
-	tmp_redir = ft_strdup(all->redir_file);
-	free(all->redir_file);
-	all->redir_file = NULL;
 	while (line[*i])
 	{
 		if (line[*i] == '<' && line[*i + 1] == '<')
@@ -95,13 +69,21 @@ void	wrong_fd(t_all *all, char *line, int *i, int *fd)
 		}
 		(*i)++;
 	}
+}
+
+void	wrong_fd(t_all *all, char *line, int *i, int *fd)
+{
+	char	*tmp_redir;
+
+	tmp_redir = ft_strdup(all->redir_file);
+	free(all->redir_file);
+	all->redir_file = NULL;
+	heredoc_redirection(all, line, i);
 	all->redir_file = ft_strdup(tmp_redir);
 	free(tmp_redir);
 	*fd = open_file(all);
 	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(all->redir_file, 2);
-	ft_putstr_fd(": ", 2);
-	ft_putendl_fd(strerror(errno), 2);
+	error(all->redir_file, ": ", strerror(errno));
 	all->flag_redir = 0;
 	all->redir = 1;
 	if (all->words)
@@ -127,16 +109,15 @@ void	redirect(t_all *all, char *line, int *i)
 	{
 		wrong_fd(all, line, i, &fd);
 		return ;
-	} 
-	if (all->flag_redir == 1 || all->flag_redir == 2)
-		if (all->words && !all->flag_fd)
-		{
-			all->g_r = 1;
-			dup2(fd, 1);
-		}
-	if (all->flag_redir == 3)
-		if (all->words && !all->flag_fd)
-			dup2(fd, 0);
+	}
+	if ((all->flag_redir == 1 || all->flag_redir == 2)
+		&& all->words && !all->flag_fd)
+	{
+		all->f_r = 1;
+		dup2(fd, 1);
+	}
+	if (all->flag_redir == 3 && all->words && !all->flag_fd)
+		dup2(fd, 0);
 	if (all->flag_redir == 4)
 		heredoc(all, &fd, line, i);
 	g_exit = 0;

@@ -1,6 +1,6 @@
 NAME = minishell
 
-FLAGS = -g -Wall -Werror -Wextra
+FLAGS = -Wall -Werror -Wextra
 FLAGS_READLINE = -lreadline -L ~/.brew/opt/readline/lib
 
 LIBPATH = libft/
@@ -32,8 +32,9 @@ SRC_FILES =	main.c\
 	parser/env_parser.c\
 	utils/export_utils.c\
 	utils/env_utils.c\
-	utils/free.c\
+	utils/free_utils.c\
 	utils/parser_utils.c\
+	utils/redirect_utils.c\
 	utils/utils.c
 	
 

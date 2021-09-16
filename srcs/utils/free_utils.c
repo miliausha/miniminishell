@@ -17,3 +17,11 @@ void	free_arr(void **arr)
 		arr = NULL;
 	}
 }
+
+void	free_at_exit(t_all *all)
+{
+	if (all->words)
+		free_arr((void **)all->words);
+	if (all->env)
+		free_arr((void **)all->env);
+}

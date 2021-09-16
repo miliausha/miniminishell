@@ -1,18 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_execve.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aezzara <marvin@42.fr>                     +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/09/07 23:53:48 by aezzara           #+#    #+#             */
-/*   Updated: 2021/09/07 23:53:54 by aezzara          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
-
-
 
 /*
 **	char	*get_cmd_path(char **env, char **arr)
@@ -26,7 +12,7 @@ static char	*get_cmd_path(t_all *all, char **arr)
 	pid_t	pid;
 	char	*path;
 	int		status;
-	
+
 	path = NULL;
 	if (pipe(p) < 0)
 		exit(EXIT_FAILURE);
@@ -38,23 +24,14 @@ static char	*get_cmd_path(t_all *all, char **arr)
 		close(p[0]);
 		dup2(p[1], 1);
 		g_exit = execve("/usr/bin/which", arr, all->env);
-		// if (g_exit < 0)
 		exit(g_exit);
-		// if (arr[0] && arr[1])
-		// 	perror(arr[1]);
-		// close(p[1]);
-		// exit(EXIT_FAILURE);
 	}
-	else
-	{
-		waitpid(pid, &status, 0);
-		close(p[1]);
-		get_next_line(p[0], &path);
-		close(p[0]);
-		if (WIFEXITED(status))
-			g_exit = WEXITSTATUS(status);
-
-	}
+	waitpid(pid, &status, 0);
+	close(p[1]);
+	get_next_line(p[0], &path);
+	close(p[0]);
+	if (WIFEXITED(status))
+		g_exit = WEXITSTATUS(status);
 	return (path);
 }
 
@@ -87,14 +64,7 @@ int	ft_execve_func(char *path, t_all *all)
 {
 	pid_t	pid;
 	int		status;
-	// int		fd[2];
 
-	// if (pipe(fd) < 0)
-	// 	exit(EXIT_FAILURE);
-	// printf("path = %s\n", path);
-	// int i = 0;
-	// while (all->words[i])
-	// 	printf("words = %s\n", all->words[i++]);
 	status = 0;
 	pid = fork();
 	if (pid == -1)
@@ -104,7 +74,6 @@ int	ft_execve_func(char *path, t_all *all)
 		execve(path, all->words, all->env);
 		if (all->words[0] && all->words[1])
 			perror(all->words[1]);
-		// close(fd[1]);
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -112,10 +81,6 @@ int	ft_execve_func(char *path, t_all *all)
 		wait(&status);
 		if (WIFEXITED(status))
 			g_exit = WEXITSTATUS(status);
-		// g_exit = status / 256;
-		//printf("status = %d\n", status);
-		// close(fd[1]);
-		// close(fd[0]);
 	}
 	return (0);
 }
@@ -141,13 +106,9 @@ void	execve_cmd(t_all *all)
 	{
 		g_exit = 0;
 		g_exit = execve(cmd_path, all->words, all->env);
-		printf("cmd path = %s, errno = %d\n", cmd_path, errno);
-		// g_exit = errno;
 		exit(g_exit);
 	}
-	// printf("g_exit execve_cmd1 = %d\n", g_exit);
 	set_signals(0);
 	free_arr((void **)arr);
 	free(cmd_path);
-	// printf("g_exit execve_cmd2 = %d\n", g_exit);
 }

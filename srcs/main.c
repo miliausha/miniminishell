@@ -66,15 +66,12 @@ int	main(int ac, char **av, char **env)
 	term_settings(&all, 1);
 	while (21)
 	{
-		gettimeofday(&all.tv, NULL);
-		all.start = all.tv.tv_sec * 1000 + all.tv.tv_usec / 1000;
-		// printf("start = %ld\n", all.start);
-		// usleep(50);
 		line = get_line(&all);
 		if (!preparser(line))
 			parser(&all, line);
 		free(line);
 		line = NULL;
 	}
+	free_at_exit(&all);
 	return (0);
 }

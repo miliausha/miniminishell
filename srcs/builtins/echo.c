@@ -5,12 +5,8 @@ void	print_arg(char **words, int i, int n_flag)
 	while (words[++i])
 	{
 		ft_putstr_fd(words[i], 1);
-		// printf("word = |%s|\n", words[i]);
-		if (words[i + 1] ) //&& words[i + 1][0]) // && words[i][0]
-		{
+		if (words[i + 1])
 			ft_putchar_fd(' ', 1);
-			// printf("c = |%c|\n", words[i + 1][0]);
-		}
 	}
 	if (!n_flag)
 		ft_putchar_fd('\n', 1);

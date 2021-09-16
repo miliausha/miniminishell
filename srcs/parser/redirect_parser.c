@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void 	get_filename(t_all *all, char *line, int *i)
+void	get_filename(t_all *all, char *line, int *i)
 {
 	while (line[*i] && !ft_strchr("<>", line[*i]) && line[*i] != ' ')
 	{
