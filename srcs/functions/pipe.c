@@ -77,10 +77,12 @@
 // 	}
 // }
 
+
 void	child_process(t_all *all, int i)
 {
 	dup2(all->pipefd[1], 1);
 	close(all->pipefd[0]);
+	close(all->pipefd[1]);
 	start_parsing(all, all->parts[i]);
 	run_commands(all);
 }
@@ -111,6 +113,7 @@ void	run_pipe(t_all *all)
 		else
 		{
 			dup2(all->pipefd[0], 0);
+			close(all->pipefd[0]);
 			close(all->pipefd[1]);
 			if (WIFEXITED(status))
 			{
